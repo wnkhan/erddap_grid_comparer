@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "erddap-grid-comparer"
+version = "0.1.0"
+description = "OpenWebUI tool and FastMCP server for retrieving ERDDAP grid data and generating images."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "ERDDAP Grid Comparer maintainers" }]
+dependencies = [
+  "fastmcp>=2.0.0",
+  "httpx>=0.27.0",
+  "matplotlib>=3.8.0",
+  "netCDF4>=1.6.5",
+  "numpy>=1.26.0",
+  "pandas>=2.2,<3.0",
+  "pydantic>=2.7.0",
+  "xarray>=2024.1.0",
+  "erddapy"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "ruff>=0.5.0",
+]
+openwebui = []
+model = [
+  "openai>=1.35.0",
+]
+
+[project.scripts]
+erddap-grid-mcp = "erddap_grid_comparer.mcp_server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/erddap_grid_comparer"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
