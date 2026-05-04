@@ -19,7 +19,8 @@ dependencies = [
   "pandas>=2.2,<3.0",
   "pydantic>=2.7.0",
   "xarray>=2024.1.0",
-  "erddapy"
+  "erddapy>=3.1.1,<4.0",
+  "cartopy>=0.25,<0.26"
 ]
 
 [project.optional-dependencies]
