@@ -8,3 +8,5 @@ outputs/
 dist/
 build/
 *.egg-info/
+*.csv
+_datasets.txt
