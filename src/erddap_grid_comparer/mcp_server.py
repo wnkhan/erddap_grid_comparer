@@ -1,4 +1,5 @@
 from typing import Any
+import json
 
 from fastmcp import FastMCP
 from fastmcp.utilities.types import Image
@@ -8,7 +9,8 @@ from erddap_grid_comparer.glider_data_handler import (
     get_glider_dataset_institutions,
     get_glider_datasets,
     get_grid_labels,
-    build_grid_plot
+    build_grid_plot,
+    get_grid_summary_data
 )
 
 mcp = FastMCP("erddap-grid-comparer")
@@ -66,12 +68,14 @@ def plot_glider_grid_paths(grid_labels: list[str]):
     """Plot glider paths given a grid label
 
     Use this tool after getting the grid labels that correspond to the glider paths within a
-    grid label to display the glider tracks within that grid.
+    grid label to display the glider tracks within that grid. The inputs to this tool are the grid_labels
+    extracted by the search_glider_grid_labels tool. This tool will retrun the grid_label along with the associated
+    plot.
     """
-    return Image(
-        data=build_grid_plot(grid_labels),
-        format="png"
-    )
+    return [
+        Image(data=build_grid_plot(grid_labels), format="png"),
+        json.dumps(get_grid_summary_data(grid_labels), indent=2)
+    ]
 
 
 def main():

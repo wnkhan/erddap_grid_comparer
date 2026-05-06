@@ -16,7 +16,8 @@ import pandas as pd
 from erddap_grid_comparer.erddap_wrapper import ErddapIngestor, GLIDER_URL
 from erddap_grid_comparer.glider_cache import (
     list_grid_labels,
-    load_grid_data
+    load_grid_data,
+    list_grid_dataset_ids
 )
 
 
@@ -124,8 +125,39 @@ def build_grid_plot(grid_labels: list[str]):
 
     return buffer.getvalue()
 
+
+def get_grid_summary_data(grid_labels: list[str]):
+    glider_data_df = load_grid_data(GLIDER_CACHE_DIR, grid_labels[0])    
+
+    return {
+        'grid_label': grid_labels[0],
+        'track_count': len(glider_data_df), 
+        'track_ids': list_grid_dataset_ids(GLIDER_CACHE_DIR, grid_labels[0]),
+        'bounds': get_bounds(glider_data_df),
+        'depth_delta': float(glider_data_df['depth'].max() - glider_data_df['depth'].min()),
+        'temp_delta': float(glider_data_df['temperature'].max() - glider_data_df['temperature'].min()),
+        'salinity_delta': float(glider_data_df['salinity'].max() - glider_data_df['salinity'].min()),
+        'important_instruction': (
+            "The rendered image is only a visualization of a plot."
+            "There's no need to instruct on plotting since there is a plot attached to the output."
+            "Also no instructions are needed on generating a plot for the image generated or the plot metadata."
+            "Use this metadata as the authoritative description of what was plotted."
+        ),
+    }
+
+def get_bounds(glider_data_df: pd.DataFrame):
+    lat_col = 'precise_lat'
+    lon_col = 'precise_lon'
+
+    return {
+        'min_lon': glider_data_df[lon_col].min(),
+        'max_lon': glider_data_df[lon_col].max(),
+        'min_lat': glider_data_df[lat_col].min(),
+        'max_lat': glider_data_df[lat_col].max(),
+        'min_depth': glider_data_df['depth'].min(),
+        'max_depth': glider_data_df['depth'].max(),
+    }
+
+
 if __name__ == "__main__":
-    image_bytes = build_grid_plot(get_grid_labels(20, 30, -95, -85))
-    with open("glider_grid_paths.png","wb") as image_file:
-        image_file.write(image_bytes)
-    print("Wrote file for grid label")
+    print(get_grid_summary_data(['lat_10_20_lon_-70_-60']))
